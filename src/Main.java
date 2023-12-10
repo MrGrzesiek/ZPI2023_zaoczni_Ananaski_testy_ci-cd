@@ -5,6 +5,7 @@ public class Main {
         System.out.println("WPruska");
         System.out.println("MrGrzesiek");
         System.out.println("vAdamski");
+        // Po co to wstawiałeś????????
         ArithmeticsAdd add = new ArithmeticsAdd();
         System.out.println(add.Addition(3, 2));
     }
