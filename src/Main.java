@@ -4,5 +4,6 @@ public class Main {
         System.out.println("JanuszWdowka");
         System.out.println("WPruska");
         System.out.println("MrGrzesiek");
+        System.out.println("vAdamski");
     }
 }
