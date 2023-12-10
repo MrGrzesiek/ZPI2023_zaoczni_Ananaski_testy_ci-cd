@@ -8,5 +8,4 @@ public class Main {
         ArithmeticsAdd add = new ArithmeticsAdd();
         System.out.println(add.Addition(3, 2));
     }
-    // Zad6
 }
