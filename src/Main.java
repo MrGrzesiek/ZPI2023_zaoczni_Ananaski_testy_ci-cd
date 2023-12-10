@@ -4,7 +4,7 @@ public class Main {
         System.out.println("JanuszWdowka");
         System.out.println("WPruska");
         System.out.println("MrGrzesiek");
-        System.out.println("vAdamski"); // To ja
+        System.out.println("vAdamski");
         ArithmeticsAdd add = new ArithmeticsAdd();
         System.out.println(add.Addition(3, 2));
     }
