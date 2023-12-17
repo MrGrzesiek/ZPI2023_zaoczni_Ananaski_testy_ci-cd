@@ -7,5 +7,6 @@ public class Main {
         System.out.println("vAdamski");
         ArithmeticsAdd add = new ArithmeticsAdd();
         System.out.println(add.Addition(3, 2));
+        //Fajny kod GK
     }
 }
