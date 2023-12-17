@@ -1,6 +1,5 @@
 public class Main {
     public static void main(String[] args) {
-        //komentarz do cofnięcia jw
         System.out.println("ZPI2023_zaoczni_Ananaski WPruska");
         System.out.println("JanuszWdowka");
         System.out.println("WPruska");
