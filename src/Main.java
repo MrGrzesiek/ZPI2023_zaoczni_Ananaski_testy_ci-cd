@@ -6,6 +6,7 @@ public class Main {
         //TEST1
         System.out.println("MrGrzesiek");
         System.out.println("vAdamski");//test2
+        // Po co to wstawiałeś????????
         ArithmeticsAdd add = new ArithmeticsAdd();
         System.out.println(add.Addition(3, 2));
         //test3
