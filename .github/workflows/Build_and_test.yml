@@ -4,6 +4,7 @@ on:
   pull_request:
     types:
       - opened
+      - synchronize
       - closed
     branches:
       - 'release'
@@ -20,7 +21,7 @@ jobs:
 
     steps:
       - name: Checkout head branch of PR from GitHub
-        if: github.event.action == 'opened'
+        if: github.event.action == 'opened' || github.event.action == 'synchronize'
         uses: actions/checkout@v3
         with:
           ref: ${{github.head_ref}}
