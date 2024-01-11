@@ -4,7 +4,7 @@ on:
   pull_request:
     types:
       - opened
-      - synchronize  # Zdarzenie wywoływane podczas każdej aktualizacji (np. nowego commita) na pull request
+      - closed
     branches:
       - 'release'
       - 'develop'
@@ -20,9 +20,16 @@ jobs:
 
     steps:
       - name: Checkout head branch of PR from GitHub
+        if: github.event.action == 'opened'
         uses: actions/checkout@v3
         with:
           ref: ${{github.head_ref}}
+
+      - name: Checkout base branch of PR from GitHub
+        if: github.event.pull_request.merged == true
+        uses: actions/checkout@v3
+        with:
+          ref: ${{github.base_ref}}
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -39,19 +46,3 @@ jobs:
         with:
           files: |
             target/surefire-reports/*.xml
-
-      - name: Check test results
-        id: check_test_results
-        run: echo "::set-output name=success::$(find target/surefire-reports/ -type f -name '*.xml' | xargs grep -L '<failure' | xargs grep -L '<error')"
-
-  publish_approval:
-    needs: test_all
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check test results
-        id: check_test_results
-        run: echo "::set-output name=success::$(find ${{ needs.test_all.outputs.artifacts-path }} -type f -name '*.xml' | xargs grep -L '<failure' | xargs grep -L '<error')"
-
-      - name: Approve PR if tests passed
-        if: steps.check_test_results.outputs.success == 'true'
-        run: echo "Tests passed, you can merge now!"
