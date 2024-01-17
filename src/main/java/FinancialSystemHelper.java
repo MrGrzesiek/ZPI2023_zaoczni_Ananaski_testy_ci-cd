@@ -1,18 +1,46 @@
 import Structures.Rates.Currency;
 import Structures.Rates.Rate;
-import Structures.Table.Table;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class FinancialSystemHelper {
     public static void generateSessionsCalculations(String timeOption, String table, String currencyCode) {
+        Currency currency = FinancialSystemHelper.getData(timeOption, table, currencyCode);
 
+        List<Rate> rates = currency.getRates();
+
+        Integer growthSession = 0;
+        Integer downSession = 0;
+        Integer noChangeSession = 0;
+        Boolean isGrowing = false;
+        Boolean isFalling = false;
+        Boolean isStable = false;
+
+        for (Integer i = 0; i < rates.size() - 1; i++) {
+            Rate currentRate = rates.get(i);
+            Rate nextRate = rates.get(i + 1);
+
+            if (currentRate.getMid() > nextRate.getMid() && !isFalling) {
+                downSession++;
+                isFalling = true;
+                isGrowing = false;
+                isStable = false;
+            } else if (currentRate.getMid() < nextRate.getMid() && !isGrowing) {
+                growthSession++;
+                isGrowing = true;
+                isFalling = false;
+                isStable = false;
+            } else if (currentRate.getMid().equals(nextRate.getMid()) && !isStable) {
+                noChangeSession++;
+                isStable = true;
+                isFalling = false;
+                isGrowing = false;
+            }
+        }
     }
 
     public static void generateStaticMeasurements(String timeOption, String table, String currencyCode) {
@@ -28,8 +56,8 @@ public class FinancialSystemHelper {
         Collections.sort(mids);
 
         if (mids.size() % 2 == 0) {
-            median = ( mids.get(mids.size() / 2) + mids.get(mids.size() / 2 - 1)) / 2;
-        }else {
+            median = (mids.get(mids.size() / 2) + mids.get(mids.size() / 2 - 1)) / 2;
+        } else {
             median = mids.get(mids.size() / 2);
         }
 
@@ -41,7 +69,7 @@ public class FinancialSystemHelper {
             sum += mid;
         }
 
-        Double avg = sum/mids.size();
+        Double avg = sum / mids.size();
         standardDeviation = 0.0;
         for (Double mid : mids) {
             standardDeviation += Math.pow((mid - avg), 2);
@@ -78,12 +106,11 @@ public class FinancialSystemHelper {
             String table1,
             String currencyCode1,
             String table2,
-            String currencyCode2
-    ) {
+            String currencyCode2) {
 
     }
 
-    public static Currency getData(String timeOption, String table, String currencyCode){
+    public static Currency getData(String timeOption, String table, String currencyCode) {
         String pattern = "yyyy-MM-dd";
 
         DateFormat df = new SimpleDateFormat(pattern);
@@ -95,7 +122,7 @@ public class FinancialSystemHelper {
         Calendar c = Calendar.getInstance();
         c.setTime(today);
 
-        switch (timeOption){
+        switch (timeOption) {
             case "one week":
                 c.add(Calendar.DATE, -7);
                 endDate = df.format(c.getTime());
@@ -114,10 +141,12 @@ public class FinancialSystemHelper {
                 break;
         }
 
-        String data = FinancialSystemNBPAPI.connection("/rates/"+table+"/"+currencyCode+"/"+endDate+"/"+ todayAsString);
+        String data = FinancialSystemNBPAPI
+                .connection("/rates/" + table + "/" + currencyCode + "/" + endDate + "/" + todayAsString);
 
         Gson gson = new Gson();
-        TypeToken<Currency> myToken = new TypeToken<>(){};
+        TypeToken<Currency> myToken = new TypeToken<>() {
+        };
 
         Currency currency = gson.fromJson(data, myToken.getType());
 
