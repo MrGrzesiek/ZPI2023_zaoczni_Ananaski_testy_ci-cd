@@ -118,13 +118,27 @@ public class FinancialSystem {
 
         switch (command) {
             case "generate sessions calculations":
-                FinancialSystemHelper.generateSessionsCalculations(timeOption, currencyCode1);
+                FinancialSystemHelper.generateSessionsCalculations(
+                        timeOption,
+                        getTableByCurrencyCode(currencyCode1, currencies),
+                        currencyCode1
+                );
                 break;
             case "generate static measurements":
-                FinancialSystemHelper.generateStaticMeasurements(timeOption, currencyCode1);
+                FinancialSystemHelper.generateStaticMeasurements(
+                        timeOption,
+                        getTableByCurrencyCode(currencyCode1, currencies),
+                        currencyCode1
+                );
                 break;
             case "generate value distribution":
-                FinancialSystemHelper.generateValueDistribution(timeOption, currencyCode1, currencyCode2);
+                FinancialSystemHelper.generateValueDistribution(
+                        timeOption,
+                        getTableByCurrencyCode(currencyCode1, currencies),
+                        currencyCode1,
+                        getTableByCurrencyCode(currencyCode2, currencies),
+                        currencyCode2
+                );
                 break;
         }
     }
@@ -167,5 +181,16 @@ public class FinancialSystem {
             }
         }
         return false; // Currency code not found in the list
+    }
+
+    private static String getTableByCurrencyCode(String currencyCode, List<Table> currencies) {
+        for (Table currencyTable : currencies) {
+            for (Currency currency : currencyTable.getRates()) {
+                if (currency.getCode().equalsIgnoreCase(currencyCode)) {
+                    return currencyTable.getTable();
+                }
+            }
+        }
+        return null;
     }
 }
