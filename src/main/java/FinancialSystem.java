@@ -108,13 +108,6 @@ public class FinancialSystem {
             }
         }
 
-        // Display selected options
-        System.out.println("\nSelected Options:");
-        System.out.println("Command: " + command);
-        System.out.println("Time Option: " + timeOption);
-        System.out.println("Currency Code 1: " + currencyCode1);
-        System.out.println("Currency Code 2: " + currencyCode2);
-
         switch (command) {
             case "generate sessions calculations":
                 FinancialSystemHelper.generateSessionsCalculations(
