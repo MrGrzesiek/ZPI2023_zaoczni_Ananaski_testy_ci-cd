@@ -156,8 +156,6 @@ public class FinancialSystemHelper {
             tempMidDiff = midDiff;
         }
 
-        System.out.println(changes);
-
         Double max = Collections.max(changes);
         Double min = Collections.min(changes);
 
@@ -178,6 +176,18 @@ public class FinancialSystemHelper {
             intervals.add(interval);
             start = end;
         }
+
+        String fileName = generateFileName("valueDistribution");
+        List<String> headers = new ArrayList<>(Arrays.asList("start", "end", "count"));
+        List<List<String>> values = new ArrayList<>();
+        for (Interval interval : intervals) {
+            List<String> result = new ArrayList<>();
+            result.add(interval.getStart().toString());
+            result.add(interval.getEnd().toString());
+            result.add(interval.getCount().toString());
+            values.add(result);
+        }
+        generateCSVFile(fileName, headers, values);
     }
 
     public static Currency getData(String timeOption, String table, String currencyCode) {
@@ -235,7 +245,7 @@ public class FinancialSystemHelper {
     private static void generateCSVFile(String fileName, List<String> headers, List<List<String>> values) {
         String downloadFolderPath = getDownloadFolderPath();
 
-        try (CSVWriter csvWriter = new CSVWriter(new FileWriter(downloadFolderPath + fileName))) {
+        try (CSVWriter csvWriter = new CSVWriter(new FileWriter(downloadFolderPath + fileName), CSVWriter.DEFAULT_SEPARATOR, CSVWriter.NO_ESCAPE_CHARACTER, CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END)) {
             csvWriter.writeNext(headers.toArray(new String[0]));
 
             for (List<String> recordValues: values) {
