@@ -31,6 +31,7 @@ public class FinancialSystem {
             }
         }
         handleCommand(command, scanner);
+        System.out.println(FinancialSystemNBPAPI.connection("tables/B"));
     }
 
     // Method to handle specific commands
@@ -90,6 +91,7 @@ public class FinancialSystem {
         System.out.println("Time Option: " + timeOption);
         System.out.println("Currency Code 1: " + currencyCode1);
         System.out.println("Currency Code 2: " + currencyCode2);
+
         switch (command) {
             case "generate sessions calculations":
                 FinancialSystemHelper.generateSessionsCalculations(timeOption, currencyCode1);
