@@ -37,7 +37,6 @@ public class FinancialSystem {
             }
         }
         handleCommand(command, scanner);
-        System.out.println(FinancialSystemNBPAPI.connection("tables/B"));
     }
 
     // Method to handle specific commands
