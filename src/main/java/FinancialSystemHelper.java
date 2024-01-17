@@ -1,3 +1,4 @@
+import Structures.Interval.Interval;
 import Structures.Rates.Currency;
 import Structures.Rates.Rate;
 import com.google.gson.Gson;
@@ -108,6 +109,48 @@ public class FinancialSystemHelper {
             String table2,
             String currencyCode2) {
 
+        Currency currency = FinancialSystemHelper.getData(timeOption, table1, currencyCode1);
+        Currency currency2 = FinancialSystemHelper.getData(timeOption, table2, currencyCode2);
+
+        ArrayList<Double> changes = new ArrayList<>();
+
+        Double tempMidDiff = 0.0;
+        for(int i=0; i < currency.getRates().size(); i++){
+
+            Double mid  = currency.getRates().get(i).getMid();
+            Double mid2 = currency2.getRates().get(i).getMid();
+
+            Double midDiff = mid/mid2;
+            if(i != 0){
+                Double change = midDiff - tempMidDiff;
+                changes.add(change);
+            }
+
+            tempMidDiff = midDiff;
+        }
+
+        System.out.println(changes);
+
+        Double max = Collections.max(changes);
+        Double min = Collections.min(changes);
+
+        Double intervalSize = (max - min)/10;
+
+        List<Interval> intervals = new ArrayList<>();
+
+        Double start = min;
+
+        while (start < max){
+            Double end = start+intervalSize;
+            Interval interval = new Interval(start, end, 0);
+            for(Double change : changes){
+                if(change >= start && change < end){
+                    interval.setCount(interval.getCount()+1);
+                }
+            }
+            intervals.add(interval);
+            start = end;
+        }
     }
 
     public static Currency getData(String timeOption, String table, String currencyCode) {
