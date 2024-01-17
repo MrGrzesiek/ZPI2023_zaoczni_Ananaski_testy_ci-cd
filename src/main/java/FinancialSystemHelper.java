@@ -3,7 +3,11 @@ import Structures.Rates.Currency;
 import Structures.Rates.Rate;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.opencsv.CSVWriter;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -42,6 +46,17 @@ public class FinancialSystemHelper {
                 isGrowing = false;
             }
         }
+
+        String fileName = generateFileName("sessionsCalculations");
+        List<String> headers = new ArrayList<>(Arrays.asList("growthSession", "downSession", "noChangeSession"));
+        List<List<String>> values = new ArrayList<>();
+        List<String> result = new ArrayList<>();
+        result.add(growthSession.toString());
+        result.add(downSession.toString());
+        result.add(noChangeSession.toString());
+        values.add(result);
+
+        generateCSVFile(fileName, headers, values);
     }
 
     public static void generateStaticMeasurements(String timeOption, String table, String currencyCode) {
@@ -100,6 +115,18 @@ public class FinancialSystemHelper {
                 count = entry.getValue();
             }
         }
+
+        String fileName = generateFileName("staticMeasurements");
+        List<String> headers = new ArrayList<>(Arrays.asList("median", "standardDeviation", "coefficientOfVariation", "dominant"));
+        List<List<String>> values = new ArrayList<>();
+        List<String> result = new ArrayList<>();
+        result.add(median.toString());
+        result.add(standardDeviation.toString());
+        result.add(coefficientOfVariation.toString());
+        result.add(dominant.toString());
+        values.add(result);
+
+        generateCSVFile(fileName, headers, values);
     }
 
     public static void generateValueDistribution(
@@ -194,5 +221,35 @@ public class FinancialSystemHelper {
         Currency currency = gson.fromJson(data, myToken.getType());
 
         return currency;
+    }
+
+    private static String generateFileName(String command) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
+
+        Date currentTime = new Date();
+        String formattedTime = dateFormat.format(currentTime);
+
+        return command + "_" + formattedTime + ".csv";
+    }
+
+    private static void generateCSVFile(String fileName, List<String> headers, List<List<String>> values) {
+        String downloadFolderPath = getDownloadFolderPath();
+
+        try (CSVWriter csvWriter = new CSVWriter(new FileWriter(downloadFolderPath + fileName))) {
+            csvWriter.writeNext(headers.toArray(new String[0]));
+
+            for (List<String> recordValues: values) {
+                csvWriter.writeNext(recordValues.toArray(new String[0]));
+            }
+
+            System.out.println("The CSV file was successfully generated in the Download folder.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static String getDownloadFolderPath() {
+        String home = System.getProperty("user.home");
+        return home + File.separator + "Downloads" + File.separator;
     }
 }
