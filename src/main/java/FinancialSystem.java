@@ -1,9 +1,15 @@
+import Structures.Table.Currency;
+import Structures.Table.Table;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class FinancialSystem {
     public static void startSystem() {
         Scanner scanner = new Scanner(System.in);
-
         System.out.println("Welcome to the Financial System!");
         Boolean isCommandSelected = false;
         String command = "";
@@ -37,6 +43,7 @@ public class FinancialSystem {
     // Method to handle specific commands
     private static void handleCommand(String command, Scanner scanner) {
         System.out.println("You selected: " + command);
+        List<Table> currencies = getCurencies();
 
         // Get time option
         String timeOption;
@@ -75,14 +82,31 @@ public class FinancialSystem {
         }
 
         // Get currency code
-        System.out.print("Enter the currency code (ISO 4217): ");
-        String currencyCode1 = scanner.nextLine();
+        String currencyCode1;
+        while (true) {
+            System.out.print("Enter the currency code (ISO 4217): ");
+            currencyCode1 = scanner.nextLine();
+
+            if (isValidCurrencyCode(currencyCode1, currencies)) {
+                break; // Break the loop if validation passes
+            } else {
+                System.out.println("Invalid currency code 1. Please enter a valid currency code.");
+            }
+        }
 
         // For Shift Distribution, get the second currency code
         String currencyCode2 = "";
         if (command.equalsIgnoreCase("generate value distribution")) {
-            System.out.print("Enter the second currency code (ISO 4217): ");
-            currencyCode2 = scanner.nextLine();
+            while (true) {
+                System.out.print("Enter the second currency code (ISO 4217): ");
+                currencyCode2 = scanner.nextLine();
+
+                if (isValidCurrencyCode(currencyCode2, currencies)) {
+                    break; // Break the loop if validation passes
+                } else {
+                    System.out.println("Invalid currency code 2. Please enter a valid currency code.");
+                }
+            }
         }
 
         // Display selected options
@@ -94,15 +118,45 @@ public class FinancialSystem {
 
         switch (command) {
             case "generate sessions calculations":
-                FinancialSystemHelper.generateSessionsCalculations(timeOption, currencyCode1);
+                FinancialSystemHelper.generateSessionsCalculations(
+                        timeOption,
+                        getTableByCurrencyCode(currencyCode1, currencies),
+                        currencyCode1
+                );
                 break;
             case "generate static measurements":
-                FinancialSystemHelper.generateStaticMeasurements(timeOption, currencyCode1);
+                FinancialSystemHelper.generateStaticMeasurements(
+                        timeOption,
+                        getTableByCurrencyCode(currencyCode1, currencies),
+                        currencyCode1
+                );
                 break;
             case "generate value distribution":
-                FinancialSystemHelper.generateValueDistribution(timeOption, currencyCode1, currencyCode2);
+                FinancialSystemHelper.generateValueDistribution(
+                        timeOption,
+                        getTableByCurrencyCode(currencyCode1, currencies),
+                        currencyCode1,
+                        getTableByCurrencyCode(currencyCode2, currencies),
+                        currencyCode2
+                );
                 break;
         }
+    }
+
+    private static List<Table> getCurencies() {
+        Gson gson = new Gson();
+        String currenciesA = FinancialSystemNBPAPI.connection("tables/A");
+        String currenciesB = FinancialSystemNBPAPI.connection("tables/B");
+        String currenciesC = FinancialSystemNBPAPI.connection("tables/C");
+        TypeToken<List<Table>> myToken = new TypeToken<>(){};
+        List<Table> myInfoA = gson.fromJson(currenciesA, myToken.getType());
+        List<Table> myInfoB = gson.fromJson(currenciesB, myToken.getType());
+        List<Table> myInfoC = gson.fromJson(currenciesC, myToken.getType());
+        List<Table> tables = new ArrayList<>();
+        tables.addAll(myInfoA);
+        tables.addAll(myInfoB);
+        tables.addAll(myInfoC);
+        return tables;
     }
 
     // Method to validate time option
@@ -116,5 +170,27 @@ public class FinancialSystem {
     // Method to validate time option for value distribution
     private static boolean isValidValueDistributionTimeOption(String timeOption) {
         return timeOption.equals("month") || timeOption.equals("quarter");
+    }
+
+    private static boolean isValidCurrencyCode(String currencyCode, List<Table> currencies) {
+        for (Table currencyTable : currencies) {
+            for (Currency currency : currencyTable.getRates()) {
+                if (currency.getCode().equalsIgnoreCase(currencyCode)) {
+                    return true; // Valid currency code found
+                }
+            }
+        }
+        return false; // Currency code not found in the list
+    }
+
+    private static String getTableByCurrencyCode(String currencyCode, List<Table> currencies) {
+        for (Table currencyTable : currencies) {
+            for (Currency currency : currencyTable.getRates()) {
+                if (currency.getCode().equalsIgnoreCase(currencyCode)) {
+                    return currencyTable.getTable();
+                }
+            }
+        }
+        return null;
     }
 }
