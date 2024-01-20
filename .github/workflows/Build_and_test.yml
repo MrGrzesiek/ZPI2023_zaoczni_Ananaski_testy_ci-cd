@@ -38,11 +38,19 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Run Maven Install
-        run: mvn -B install
+      - name: Test with Maven
+        run: |
+          # Ustaw zmienną środowiskową z ścieżką pliku tymczasowego
+          export TEMP_FILE_PATH=target/testowy_plik.txt
 
-      - name: Run Tests with File Creation
-        run: mvn -B test -Dtest=FinancialSystemHelperTest
+          # Uruchom testy Maven
+          mvn -B test
+
+          # Skopiuj utworzony plik tymczasowy do katalogu dostępnego dla GitHub Actions
+          cp $TEMP_FILE_PATH $GITHUB_WORKSPACE
+          
+          # Ustaw zmienną środowiskową dostępną dla kolejnych kroków
+          echo "TEMP_FILE_PATH=$TEMP_FILE_PATH" >> $GITHUB_ENV
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
@@ -50,3 +58,4 @@ jobs:
         with:
           files: |
             target/surefire-reports/*.xml
+
