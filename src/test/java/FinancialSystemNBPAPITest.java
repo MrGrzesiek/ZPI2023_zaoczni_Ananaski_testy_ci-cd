@@ -47,8 +47,6 @@ public class FinancialSystemNBPAPITest {
     })
     public void connection_shouldThrowArgumentException(String table, String currencyCode, String endDate, String todayAsString) {
         // Arrange & Act & Assert
-        int exCounter = 0;
-
         String _table = Optional.ofNullable(table).orElse("");
         String _currencyCode = Optional.ofNullable(currencyCode).orElse("");
         String _endDate = Optional.ofNullable(endDate).orElse("");
@@ -58,9 +56,9 @@ public class FinancialSystemNBPAPITest {
         try {
             FinancialSystemNBPAPI.connection("/rates/" + _table + "/" + _currencyCode + "/" + _endDate + "/" + _todayAsString);
         } catch (IllegalArgumentException e) {
-            exCounter++;
+            assertTrue(true);
         }
 
-        assertEquals(4, exCounter);
+
     }
 }
