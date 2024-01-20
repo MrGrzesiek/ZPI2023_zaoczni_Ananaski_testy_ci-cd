@@ -191,6 +191,9 @@ public class FinancialSystemHelper {
     }
 
     public static Currency getData(String timeOption, String table, String currencyCode) {
+        if(timeOption.isBlank() || table.isBlank() || currencyCode.isBlank()) {
+            throw new IllegalArgumentException("Parameter Error");
+        }
         String pattern = "yyyy-MM-dd";
 
         DateFormat df = new SimpleDateFormat(pattern);
