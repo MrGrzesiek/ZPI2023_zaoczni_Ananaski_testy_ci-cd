@@ -6,9 +6,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Optional;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class FinancialSystemNBPAPITest {
     @Test
@@ -47,14 +47,20 @@ public class FinancialSystemNBPAPITest {
     })
     public void connection_shouldThrowArgumentException(String table, String currencyCode, String endDate, String todayAsString) {
         // Arrange & Act & Assert
-        boolean thrown = false;
+        int exCounter = 0;
+
+        String _table = Optional.ofNullable(table).orElse("");
+        String _currencyCode = Optional.ofNullable(currencyCode).orElse("");
+        String _endDate = Optional.ofNullable(endDate).orElse("");
+        String _todayAsString = Optional.ofNullable(todayAsString).orElse("");
+
 
         try {
-            FinancialSystemNBPAPI.connection("/rates/" + table + "/" + currencyCode + "/" + endDate + "/" + todayAsString);
+            FinancialSystemNBPAPI.connection("/rates/" + _table + "/" + _currencyCode + "/" + _endDate + "/" + _todayAsString);
         } catch (IllegalArgumentException e) {
-            thrown = true;
+            exCounter++;
         }
 
-        assertTrue(thrown);
+        assertEquals(4, exCounter);
     }
 }

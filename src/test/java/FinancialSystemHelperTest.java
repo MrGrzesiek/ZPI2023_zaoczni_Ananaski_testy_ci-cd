@@ -7,6 +7,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -46,8 +47,6 @@ public class FinancialSystemHelperTest {
         } catch (IllegalArgumentException e) {
             assertTrue(true);
         }
-
-        assertTrue(false);
     }
 
     @ParameterizedTest
@@ -76,19 +75,27 @@ public class FinancialSystemHelperTest {
     })
     public void generateSessionsCalculations_passedEmptyParameters_shouldThrowException(String command, String timeOption, String table1, String currencyCode1, String table2, String currencyCode2)
     {
+        int expectedExceptionCount = 0;
+
+        String _timeOption = Optional.ofNullable(timeOption).orElse("");
+        String _table1 = Optional.ofNullable(table1).orElse("");
+        String _currencyCode1 = Optional.ofNullable(currencyCode1).orElse("");
+        String _table2 = Optional.ofNullable(table2).orElse("");
+        String _currencyCode2 = Optional.ofNullable(currencyCode2).orElse("");
+
         // Arrange & Act & Assert
         try {
             if (command.equals("sessionsCalculations"))
-                FinancialSystemHelper.generateSessionsCalculations(timeOption, table1, currencyCode1);
+                FinancialSystemHelper.generateSessionsCalculations(_timeOption, _table1, _currencyCode1);
             else if (command.equals("staticMeasurements"))
-                FinancialSystemHelper.generateStaticMeasurements(timeOption, table1, currencyCode1);
+                FinancialSystemHelper.generateStaticMeasurements(_timeOption, _table1, _currencyCode1);
             else if (command.equals("valueDistribution"))
-                FinancialSystemHelper.generateValueDistribution(timeOption, table1, currencyCode1, table2, currencyCode2);
+                FinancialSystemHelper.generateValueDistribution(_timeOption, _table1, _currencyCode1, _table2, _currencyCode2);
         } catch (IllegalArgumentException e) {
-            assertTrue(true);
+            expectedExceptionCount++;
         }
 
-        assertTrue(false);
+        assertEquals(3, expectedExceptionCount);
     }
 
     private static String getDownloadFolderPath() {
