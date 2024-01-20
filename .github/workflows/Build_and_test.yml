@@ -42,7 +42,7 @@ jobs:
         run: mvn -B install
 
       - name: Run Tests with File Creation
-        run: mvn -B test -Dtest=FinancialSystemHelperTest
+        run: mvn -B package --file pom.xml
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
