@@ -89,7 +89,7 @@ public class FinancialSystem {
             if (isValidCurrencyCode(currencyCode1, currencies)) {
                 break; // Break the loop if validation passes
             } else {
-                System.out.println("Invalid currency code 1. Please enter a valid currency code.");
+                System.out.println("Invalid currency code 1. The currency is not supported by the NBP bank. Please enter a valid currency code.");
             }
         }
 
@@ -103,7 +103,7 @@ public class FinancialSystem {
                 if (isValidCurrencyCode(currencyCode2, currencies)) {
                     break; // Break the loop if validation passes
                 } else {
-                    System.out.println("Invalid currency code 2. Please enter a valid currency code.");
+                    System.out.println("Invalid currency code 2. The currency is not supported by the NBP bank. Please enter a valid currency code.");
                 }
             }
         }
