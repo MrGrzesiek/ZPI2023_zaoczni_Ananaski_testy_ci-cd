@@ -1,0 +1,41 @@
+name: Maven Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      releaseVersion:
+        description: 'The version of the release'
+        required: true
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+        with:
+          ref: release
+          fetch-depth: 0
+          
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+          server-id: github
+
+      - name: Maven Release
+        uses: qcastel/github-actions-maven-release@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JAVA_HOME: /usr/lib/jvm/java-17-openjdk/
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          release-branch-name: "release"
+          git-release-bot-name: "Maven Release Bot"
+          git-release-bot-email: "maven@release.bot"
+          maven-repo-server-id: "github"
+          maven-args: "-e -X -DskipTests -Dmaven.javadoc.skip=true"
+          release-version: ${{ github.event.inputs.releaseVersion }}
