@@ -1,8 +1,11 @@
 name: Auto release
 on:
   pull_request:
+    types:
+      - Merged
     branches:
       - release
+    
 jobs:
     bumpTag:
       runs-on: ubuntu-latest
