@@ -1,40 +1,49 @@
-name: Java CI to create and upload release on pull request
+name: Create Release and Upload JAR
 
 on:
-  push:
-    branches: [ "release" ]
   pull_request:
-    branches: [ "release" ]
-
-env:
-  build-number: ${GITHUB_RUN_NUMBER}
+    types:
+      - closed
+    branches:
+      - 'release'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: 'maven'
+    - name: Set up JDK
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'adopt'
+        java-version: '17'
 
-      - run: mvn clean package -DskipTests
+    - name: Build JAR with Maven
+      run: |
+        mvn -B package --file pom.xml
 
-      - run: mkdir staging && ls -R target && mv target/yb-workload-sim.jar target/yb-workload-sim-${GITHUB_RUN_NUMBER}.jar && cp target/*.jar staging
-      
-      - uses: actions/upload-artifact@v3
-        with:
-          name: Package
-          path: staging
-          retention-days: 1
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref_name }}
+        release_name: Release ${{ github.ref_name }}
+        body: |
+          Changes in this release:
+          - Add details here
 
-      - uses: marvinpinto/action-automatic-releases@latest
-        with:
-          repo_token: "${{ secrets.YOUR-GITHUB-TOKEN }}"
-          automatic_release_tag: "${{ github.run_number }}"
-          title: "Automated Build ${{ github.run_number }}"
-          prerelease: true
-          files: staging/*.jar
+    - name: Upload JAR to Release
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./target/your-project.jar
+        asset_name: your-project.jar
+        asset_content_type: application/java-archive
