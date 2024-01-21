@@ -4,7 +4,7 @@ on:
     types:
       - Merged
     branches:
-      - release
+      - 'release'
     
 jobs:
     bumpTag:
