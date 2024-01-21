@@ -1,0 +1,49 @@
+name: Create Release and Upload JAR
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - 'release'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up JDK
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'adopt'
+        java-version: '17'
+
+    - name: Build JAR with Maven
+      run: |
+        mvn -B package --file pom.xml
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref_name }}
+        release_name: Release ${{ github.ref_name }}
+        body: |
+          Changes in this release:
+          - Add details here
+
+    - name: Upload JAR to Release
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./target/your-project.jar
+        asset_name: your-project.jar
+        asset_content_type: application/java-archive
