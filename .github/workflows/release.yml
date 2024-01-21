@@ -23,8 +23,8 @@ jobs:
 
       - run: mvn clean package -DskipTests
 
-      - run: mkdir staging && mv target/yb-workload-sim.jar target/yb-workload-sim-${{ env.build-number }}.jar && cp target/*.jar staging
-
+      - run: mkdir staging && ls -R target && mv target/yb-workload-sim.jar target/yb-workload-sim-${GITHUB_RUN_NUMBER}.jar && cp target/*.jar staging
+      
       - uses: actions/upload-artifact@v3
         with:
           name: Package
