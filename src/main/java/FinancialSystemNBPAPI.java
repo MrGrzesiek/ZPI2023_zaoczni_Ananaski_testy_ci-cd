@@ -7,6 +7,9 @@ import java.util.Scanner;
 public class FinancialSystemNBPAPI {
     private static String baseUrl = "http://api.nbp.pl/api/exchangerates/";
     public static String connection(String address) {
+        if(address.contains("//") || address.endsWith("/")) {
+            throw new IllegalArgumentException("Wrong link address");
+        }
         URL url = null;
         try {
             url = new URL(baseUrl + address + "/?format=json");
