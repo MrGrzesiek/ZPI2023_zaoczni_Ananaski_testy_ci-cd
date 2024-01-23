@@ -4,8 +4,17 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 
+/**
+ * Class which connect to NBP API
+ */
 public class FinancialSystemNBPAPI {
     private static String baseUrl = "http://api.nbp.pl/api/exchangerates/";
+
+    /**
+     * Method used to obtain the result from the NBP API
+     * @param address middle part of address to NBP API
+     * @return JSON result
+     */
     public static String connection(String address) {
         if(address.contains("//") || address.endsWith("/")) {
             throw new IllegalArgumentException("Wrong link address");
@@ -24,7 +33,7 @@ public class FinancialSystemNBPAPI {
             connection.connect();
             responseCode = connection.getResponseCode();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Connection problem");
         }
 
         if (responseCode != 200) {
