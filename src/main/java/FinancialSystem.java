@@ -7,7 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Class with User Interface
+ */
 public class FinancialSystem {
+    /**
+     * Function which init financial system
+     */
     public static void startSystem() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Welcome to the Financial System!");
@@ -39,10 +45,19 @@ public class FinancialSystem {
         handleCommand(command, scanner);
     }
 
-    // Method to handle specific commands
+    /**
+     * Method which is used to config time and currencies values
+     * @param command value one of three commands: generate sessions calculations/generate static measurements/generate value distribution
+     * @param scanner Scanner object
+     */
     private static void handleCommand(String command, Scanner scanner) {
         System.out.println("You selected: " + command);
-        List<Table> currencies = getCurencies();
+        List<Table> currencies;
+        try {
+            currencies = getCurencies();
+        } catch (Exception e) {
+            return;
+        }
 
         // Get time option
         String timeOption;
@@ -135,6 +150,10 @@ public class FinancialSystem {
         }
     }
 
+    /**
+     * Method which get all curencies from IMDB
+     * @return List of Table objects
+     */
     private static List<Table> getCurencies() {
         Gson gson = new Gson();
         String currenciesA = FinancialSystemNBPAPI.connection("tables/A");
@@ -151,7 +170,11 @@ public class FinancialSystem {
         return tables;
     }
 
-    // Method to validate time option
+    /**
+     * Method to valid time option
+     * @param timeOption input value
+     * @return result of validation
+     */
     private static boolean isValidTimeOption(String timeOption) {
         return timeOption.equals("one week") ||
                 timeOption.equals("two weeks") ||
@@ -159,11 +182,21 @@ public class FinancialSystem {
                 timeOption.equals("quarter");
     }
 
-    // Method to validate time option for value distribution
+    /**
+     * Method to valid time option for distribution
+     * @param timeOption input value
+     * @return result of validation
+     */
     private static boolean isValidValueDistributionTimeOption(String timeOption) {
         return timeOption.equals("month") || timeOption.equals("quarter");
     }
 
+    /**
+     * a method that checks whether the currency exists in the NBP API
+     * @param currencyCode currency code
+     * @param currencies list of Table objects
+     * @return result of validation
+     */
     private static boolean isValidCurrencyCode(String currencyCode, List<Table> currencies) {
         for (Table currencyTable : currencies) {
             for (Currency currency : currencyTable.getRates()) {
@@ -175,6 +208,12 @@ public class FinancialSystem {
         return false; // Currency code not found in the list
     }
 
+    /**
+     * Method which get NBP API table name
+     * @param currencyCode currency code
+     * @param currencies list of Table objects
+     * @return name of NBP table Name
+     */
     private static String getTableByCurrencyCode(String currencyCode, List<Table> currencies) {
         for (Table currencyTable : currencies) {
             for (Currency currency : currencyTable.getRates()) {
