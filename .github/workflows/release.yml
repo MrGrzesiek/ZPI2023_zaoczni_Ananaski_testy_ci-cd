@@ -19,8 +19,11 @@ jobs:
         distribution: 'adopt'
         java-version: '17'  # Ustaw wersję Java zgodnie z Twoimi wymaganiami
 
-    - name: Create Download directory
-      run: mkdir -p /home/runner/Download
+    - name: Wait for Download directory
+      run: |
+        while [ ! -d "/home/runner/Download" ]; do
+          sleep 10
+        done
 
     - name: Build project
       run: mvn clean install
