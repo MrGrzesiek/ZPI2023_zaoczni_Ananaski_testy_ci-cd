@@ -4,7 +4,7 @@ on:
     types:
       - merged
     branches:
-      - release
+      - 'release'
 jobs:
     bumpTag:
       runs-on: ubuntu-latest
