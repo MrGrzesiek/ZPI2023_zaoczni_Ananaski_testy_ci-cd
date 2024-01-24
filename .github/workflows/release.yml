@@ -36,6 +36,9 @@ jobs:
         RELEASE_NAME="v$(date +'%Y%m%d%H%M%S')"
         echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
         gh release create $RELEASE_NAME target/*.jar -t "$RELEASE_NAME" -n "Release $RELEASE_NAME"
+        
+    - name: Remove existing asset
+      run: gh release delete $RELEASE_NAME ZPI2023_zaoczni_Ananaski-1.0-SNAPSHOT.jar
 
     - name: Upload JAR to Release
       run: gh release upload $RELEASE_NAME target/*.jar
