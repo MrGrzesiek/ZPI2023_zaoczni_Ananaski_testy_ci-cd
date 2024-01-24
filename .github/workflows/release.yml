@@ -1,0 +1,35 @@
+name: Create Release and Upload JAR
+
+on:
+  push:
+    branches:
+      - release
+
+jobs:
+  create_release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Java and Maven
+      uses: actions/setup-java@v2
+      with:
+        java-version: '17'  # Ustaw wersję Java zgodnie z Twoimi wymaganiami
+        maven-version: '3.8'  # Ustaw wersję Maven zgodnie z Twoimi wymaganiami
+
+    - name: Build project
+      run: mvn clean install
+
+    - name: Create Release
+      id: create_release
+      run: |
+        RELEASE_NAME="v$(date +'%Y%m%d%H%M%S')"
+        echo "::set-output name=RELEASE_NAME::$RELEASE_NAME"
+        gh release create $RELEASE_NAME target/*.jar -t "$RELEASE_NAME" -n "Release $RELEASE_NAME"
+
+    - name: Upload JAR to Release
+      run: gh release upload ${{ steps.create_release.outputs.RELEASE_NAME }} target/*.jar
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
