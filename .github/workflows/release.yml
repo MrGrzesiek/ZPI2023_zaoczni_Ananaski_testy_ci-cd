@@ -1,4 +1,4 @@
-name: Auto Tag Release and Create Release with JAR
+name: Create Release and Upload JAR
 
 on:
   push:
@@ -6,58 +6,33 @@ on:
       - release
 
 jobs:
-  bumpTag:
-    runs-on: ubuntu-latest
-    outputs:
-      tag_name: ${{ steps.tag_version.outputs.TAG }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Bump version and push tag
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v6.1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
   create_release:
-    needs: bumpTag
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      checks: write
-      pull-requests: write
-      issues: read
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: Set up Java
-        uses: actions/setup-java@v2
-        with:
-          java-version: '17'  # Set the Java version according to your requirements
-          distribution: 'temurin'
+    - name: Set up Java and Maven
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'adopt'
+        java-version: '17'  # Ustaw wersję Java zgodnie z Twoimi wymaganiami
 
-      - name: Set up Maven
-        run: |
-          sudo apt-get install -y maven
+    - name: Create Download directory
+      run: mkdir -p /home/runner/Downloads
 
-      - name: Create Downloads directory
-        run: mkdir -p /home/runner/Downloads
+    - name: Build project
+      run: mvn clean install
 
-      - name: Build project
-        run: mvn clean install
+    - name: Set up GitHub CLI
+      run: |
+        echo "GH_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+        gh --version  # Sprawdź, czy GitHub CLI jest dostępne w PATH
+    - name: Create Release
+      id: create_release
+      run: |
+        RELEASE_NAME="v$(date +'%Y_%m_%d_%H_%M_%S')"
+        echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
+        gh release create $RELEASE_NAME target/*.jar -t "$RELEASE_NAME" -n "Release $RELEASE_NAME"
         
-      - name: Set up GitHub CLI
-        run: |
-          echo "GH_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
-          gh --version  # Sprawdź, czy GitHub CLI jest dostępne w PATH
-          
-      - name: Create Release
-        id: create_release
-        run: |
-          RELEASE_NAME="v$(date +'%Y%m%d%H%M%S')"
-          echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
-          gh release create $RELEASE_NAME target/*.jar -t "$RELEASE_NAME" -n "Release $RELEASE_NAME"
-
