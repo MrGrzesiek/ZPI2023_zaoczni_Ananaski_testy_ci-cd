@@ -20,6 +20,11 @@ jobs:
 
   create_release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+      issues: read
 
     steps:
       - name: Checkout repository
@@ -45,5 +50,5 @@ jobs:
         id: create_release
         run: |
           RELEASE_NAME=${{ steps.tag_version.outputs.TAG }}
-          echo "::set-output name=RELEASE_NAME::$RELEASE_NAME"
+          echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
           gh release create $RELEASE_NAME target/*.jar -t "$RELEASE_NAME" -n "Release $RELEASE_NAME"
