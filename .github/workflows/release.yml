@@ -8,29 +8,20 @@ on:
 jobs:
   create_release:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      checks: write
-      pull-requests: write
-      issues: read
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Set up Java
+    - name: Set up Java and Maven
       uses: actions/setup-java@v2
       with:
+        distribution: 'adopt'
         java-version: '17'  # Ustaw wersję Java zgodnie z Twoimi wymaganiami
-        distribution: 'temurin'
-        
-    - name: Set up Maven
-      run: |
-        sudo apt-get install -y maven
-        
-    - name: Create Downloads directory
-        run: mkdir -p /home/runner/Downloads
-        
+
+    - name: Create Download directory
+      run: mkdir -p /home/runner/Download
+
     - name: Build project
       run: mvn clean install
 
