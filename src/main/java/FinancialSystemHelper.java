@@ -308,7 +308,7 @@ public class FinancialSystemHelper {
      * Method to get user dowlonad folder path
      * @return Download folder path
      */
-    private static String getDownloadFolderPath() {
+    public static String getDownloadFolderPath() {
         String home = System.getProperty("user.home");
         return home + File.separator + "Downloads" + File.separator;
     }
