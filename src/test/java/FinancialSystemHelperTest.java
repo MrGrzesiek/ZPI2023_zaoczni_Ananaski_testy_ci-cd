@@ -64,6 +64,7 @@ public class FinancialSystemHelperTest {
 
         // Assert
         File file = new File(getDownloadFolderPath() + generateFileName(command));
+        System.out.println(getDownloadFolderPath());
         assertTrue(file.exists());
     }
 
