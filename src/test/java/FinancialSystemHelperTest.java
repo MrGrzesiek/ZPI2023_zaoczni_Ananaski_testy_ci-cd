@@ -83,10 +83,8 @@ public class FinancialSystemHelperTest {
 
         // Arrange & Act & Assert
         try {
-            if (command.equals("sessionsCalculations")){
+            if (command.equals("sessionsCalculations"))
                 FinancialSystemHelper.generateSessionsCalculations(_timeOption, _table1, _currencyCode1);
-                System.out.println("download location "+FinancialSystemHelper.getDownloadFolderPath());
-            }
             else if (command.equals("staticMeasurements"))
                 FinancialSystemHelper.generateStaticMeasurements(_timeOption, _table1, _currencyCode1);
             else if (command.equals("valueDistribution"))
