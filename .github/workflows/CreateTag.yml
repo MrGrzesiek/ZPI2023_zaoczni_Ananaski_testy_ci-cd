@@ -4,14 +4,26 @@ on:
   push:
     branches:
       - release
-      
+
 jobs:
-    bumpTag:
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v2
-        - name: Bump version and push tag
-          id: tag_version
-          uses: mathieudutour/github-tag-action@v6.1
-          with:
-            github_token: ${{ secrets.GITHUB_TOKEN }}
+  bumpTag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Get current tag
+        id: current_tag
+        run: echo "::set-output name=tag::$(git describe --tags --abbrev=0)"
+
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Display tag information
+        run: |
+          echo "Current tag: ${{ steps.current_tag.outputs.tag }}"
+          echo "New tag created: ${{ steps.tag_version.outputs.tag }}"
+          git show ${{ steps.tag_version.outputs.tag }}
