@@ -55,3 +55,11 @@ jobs:
           RELEASE_NAME=${{ needs.bumpTag.outputs.tag_name }}
           echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
           gh release create $RELEASE_NAME target/*.jar -t "$RELEASE_NAME" -n "Release $RELEASE_NAME"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload JAR to Release
+        run: gh release upload $RELEASE_NAME target/*.jar
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
