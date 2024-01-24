@@ -33,14 +33,8 @@ jobs:
     - name: Create Release
       id: create_release
       run: |
-        RELEASE_NAME="v$(date +'%Y%m%d%H%M%S')"
+        RELEASE_NAME="v$(date +'%Y/%m/%d/%H:%M:%S')"
         echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
         gh release create $RELEASE_NAME target/*.jar -t "$RELEASE_NAME" -n "Release $RELEASE_NAME"
         
-    - name: Rename JAR file
-      run: mv target/ZPI2023_zaoczni_Ananaski-1.0-SNAPSHOT.jar target/new_name.jar
 
-    - name: Upload JAR to Release
-      run: gh release upload $RELEASE_NAME target/*.jar
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
