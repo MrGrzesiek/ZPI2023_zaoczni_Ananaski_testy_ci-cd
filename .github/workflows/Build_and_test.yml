@@ -38,13 +38,13 @@ jobs:
           distribution: 'temurin'
 
       - name: Allow tests to create files in Downloads directory
-        run: chmod 777 $GITHUB_WORKSPACE/Downloads
+        run: chmod 777 $GITHUB_WORKSPACE/Downloads/
         
       - name: Show GITHUB_WORKSPACE/Downloads
-        run: echo $GITHUB_WORKSPACE/Downloads
+        run: echo $GITHUB_WORKSPACE/Downloads/
 
       - name: Show contents of GITHUB_WORKSPACE/Downloads
-        run: ls $GITHUB_WORKSPACE/Downloads
+        run: ls $GITHUB_WORKSPACE/Downloads/
       
       - name: Test with Maven
         run: mvn -B test
