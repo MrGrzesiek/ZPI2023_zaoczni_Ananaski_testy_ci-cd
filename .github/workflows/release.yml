@@ -48,7 +48,12 @@ jobs:
 
       - name: Build project
         run: mvn clean install
-
+        
+      - name: Set up GitHub CLI
+        run: |
+          echo "GH_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+          gh --version  # Sprawdź, czy GitHub CLI jest dostępne w PATH
+        
       - name: Create Release
         id: create_release
         run: |
