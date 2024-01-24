@@ -13,6 +13,13 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class FinancialSystemHelper {
+
+    /**
+     * Method used to generate Sessions Calculations
+     * @param timeOption time option value
+     * @param table table name for currency
+     * @param currencyCode Currency code in ISO 4217
+     */
     public static void generateSessionsCalculations(String timeOption, String table, String currencyCode) {
         Currency currency = FinancialSystemHelper.getData(timeOption, table, currencyCode);
 
@@ -59,6 +66,12 @@ public class FinancialSystemHelper {
         generateCSVFile(fileName, headers, values);
     }
 
+    /**
+     * Method used to generate Static Measurements
+     * @param timeOption time option value
+     * @param table table name for currency
+     * @param currencyCode Currency code in ISO 4217
+     */
     public static void generateStaticMeasurements(String timeOption, String table, String currencyCode) {
         Currency currency = FinancialSystemHelper.getData(timeOption, table, currencyCode);
 
@@ -129,6 +142,14 @@ public class FinancialSystemHelper {
         generateCSVFile(fileName, headers, values);
     }
 
+    /**
+     * Method used to generate Value Distribution
+     * @param timeOption time option value
+     * @param table1 table name for first currency
+     * @param currencyCode1 Currency code in ISO 4217
+     * @param table2 table name for second currency
+     * @param currencyCode2 Currency code in ISO 4217
+     */
     public static void generateValueDistribution(
             String timeOption,
             String table1,
@@ -190,7 +211,17 @@ public class FinancialSystemHelper {
         generateCSVFile(fileName, headers, values);
     }
 
+    /**
+     * Method used to get data from NBP
+     * @param timeOption time option value
+     * @param table NBP API table Name
+     * @param currencyCode Currency code in ISO 4217
+     * @return Rate Surrency object
+     */
     public static Currency getData(String timeOption, String table, String currencyCode) {
+        if(timeOption.isBlank() || table.isBlank() || currencyCode.isBlank()) {
+            throw new IllegalArgumentException("Parameter Error");
+        }
         String pattern = "yyyy-MM-dd";
 
         DateFormat df = new SimpleDateFormat(pattern);
@@ -220,9 +251,13 @@ public class FinancialSystemHelper {
                 endDate = df.format(c.getTime());
                 break;
         }
-
-        String data = FinancialSystemNBPAPI
-                .connection("/rates/" + table + "/" + currencyCode + "/" + endDate + "/" + todayAsString);
+        String data = "";
+        try {
+            data = FinancialSystemNBPAPI
+                    .connection("/rates/" + table + "/" + currencyCode + "/" + endDate + "/" + todayAsString);
+        } catch (Exception e) {
+            System.exit(0);
+        }
 
         Gson gson = new Gson();
         TypeToken<Currency> myToken = new TypeToken<>() {
@@ -233,6 +268,11 @@ public class FinancialSystemHelper {
         return currency;
     }
 
+    /**
+     * Method used to generate file name
+     * @param command command name
+     * @return new file name
+     */
     private static String generateFileName(String command) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
 
@@ -242,6 +282,12 @@ public class FinancialSystemHelper {
         return command + "_" + formattedTime + ".csv";
     }
 
+    /**
+     * Method used to generate and save CSV file
+     * @param fileName file name
+     * @param headers CSV headers
+     * @param values CSV next lines with values
+     */
     private static void generateCSVFile(String fileName, List<String> headers, List<List<String>> values) {
         String downloadFolderPath = getDownloadFolderPath();
 
@@ -258,6 +304,10 @@ public class FinancialSystemHelper {
         }
     }
 
+    /**
+     * Method to get user dowlonad folder path
+     * @return Download folder path
+     */
     private static String getDownloadFolderPath() {
         String home = System.getProperty("user.home");
         return home + File.separator + "Downloads" + File.separator;
