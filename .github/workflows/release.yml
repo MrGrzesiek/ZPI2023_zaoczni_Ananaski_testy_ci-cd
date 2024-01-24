@@ -36,3 +36,5 @@ jobs:
       run: gh release upload ${{ steps.create_release.outputs.RELEASE_NAME }} target/*.jar
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Create Download directory
+      run: ls /home/runner/Download
