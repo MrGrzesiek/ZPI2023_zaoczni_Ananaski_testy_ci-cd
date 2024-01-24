@@ -37,6 +37,9 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Allow tests to create files in Downloads directory
+        run: chmod 777 $HOME/Downloads
+      
       - name: Test with Maven
         run: mvn -B test
 
