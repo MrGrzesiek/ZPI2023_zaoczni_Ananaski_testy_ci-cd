@@ -8,6 +8,8 @@ on:
 jobs:
   bumpTag:
     runs-on: ubuntu-latest
+    outputs:
+      tag_name: ${{ steps.tag_version.outputs.TAG }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -19,6 +21,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
   create_release:
+    needs: bumpTag
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -49,6 +52,6 @@ jobs:
       - name: Create Release
         id: create_release
         run: |
-          RELEASE_NAME=${{ steps.tag_version.outputs.TAG }}
+          RELEASE_NAME=${{ needs.bumpTag.outputs.tag_name }}
           echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
           gh release create $RELEASE_NAME target/*.jar -t "$RELEASE_NAME" -n "Release $RELEASE_NAME"
