@@ -20,11 +20,6 @@ jobs:
 
   create_release:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      checks: write
-      pull-requests: write
-      issues: read
 
     steps:
       - name: Checkout repository
