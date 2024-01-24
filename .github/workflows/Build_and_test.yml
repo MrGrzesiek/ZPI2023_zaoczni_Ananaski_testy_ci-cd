@@ -36,15 +36,15 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-
-      - name: Allow tests to create files in Downloads directory
-        run: chmod 777 /home/runner/Downloads/
         
       - name: Show GITHUB_WORKSPACE/Downloads
         run: echo /home/runner/Downloads/
 
       - name: Show contents of GITHUB_WORKSPACE/Downloads
         run: ls /home/runner/Downloads/
+
+      - name: Allow tests to create files in Downloads directory
+        run: chmod 777 /home/runner/Downloads/
         
       - name: Allow tests to create files in Downloads directory
         run: chmod 777 $GITHUB_WORKSPACE/Downloads/
