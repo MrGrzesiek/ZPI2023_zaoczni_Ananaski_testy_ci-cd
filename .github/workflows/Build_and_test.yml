@@ -43,6 +43,12 @@ jobs:
       - name: Show contents of GITHUB_WORKSPACE/Downloads
         run: ls /home/runner
 
+      - name: Create Downloads directory
+        run: mkdir -p /home/runner/Downloads
+
+      - name: Show contents of GITHUB_WORKSPACE/Downloads
+        run: ls /home/runner/Downloads
+
       - name: Allow tests to create files in Downloads directory
         run: chmod 777 $GITHUB_WORKSPACE/Downloads/
         
