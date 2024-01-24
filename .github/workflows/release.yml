@@ -13,28 +13,31 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Create Download directory
-      run: mkdir -p /home/runner/Downloads
-
     - name: Set up Java and Maven
       uses: actions/setup-java@v2
       with:
         distribution: 'adopt'
         java-version: '17'  # Ustaw wersję Java zgodnie z Twoimi wymaganiami
 
+    - name: Create Download directory
+      run: mkdir -p /home/runner/Downloads
+
     - name: Build project
       run: mvn clean install
+
+    - name: Set up GitHub CLI
+      run: |
+        echo "env GH_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+        gh --version  # Sprawdź, czy GitHub CLI jest dostępne w PATH
 
     - name: Create Release
       id: create_release
       run: |
         RELEASE_NAME="v$(date +'%Y%m%d%H%M%S')"
-        echo "::set-output name=RELEASE_NAME::$RELEASE_NAME"
+        echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
         gh release create $RELEASE_NAME target/*.jar -t "$RELEASE_NAME" -n "Release $RELEASE_NAME"
 
     - name: Upload JAR to Release
-      run: gh release upload ${{ steps.create_release.outputs.RELEASE_NAME }} target/*.jar
+      run: gh release upload $RELEASE_NAME target/*.jar
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Create Download directory
-      run: ls /home/runner/Download
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
